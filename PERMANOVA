@@ -1,0 +1,21 @@
+## Import data table containing species abundances
+my_species = read.table("Species.csv", header=T, row.names=1, sep=",")
+
+## Import data table containing environmental variables of samples included in "my_species"
+my_variables = read.table("Env_variables.csv", header=T, row.names=1, sep=",")
+
+## Load vegan package
+library(vegan)
+adonis(my_species ~ Env_variable1 + Env_variable2 * Env_variable3, data=my_variables, permutations=999)
+
+## NOTE 1
+# adonis performs PERMANOVA tests in such a way that "Terms added sequentially (first to last)" which means that THE ORDER OF THE VARIABLES MATTERS when defining the result.
+
+## NOTE 2
+# Variables separated by "+" are evaluated independently while variables with "*" are dependent to each other for the test, this while respecting the order of the variables (See note 1).
+
+## Reading result
+# It is generally accepted that any separation between groups is NOT SIGNIFICANT if Pr(>F) > 0.05).
+# More info: 
+# https://mb3is.megx.net/gustame/hypothesis-tests/manova/npmanova
+# http://search.r-project.org/library/vegan/html/adonis.html
