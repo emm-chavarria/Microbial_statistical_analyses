@@ -1,0 +1,19 @@
+## Load the library
+library(vegan)
+
+## Import data table containing species abundances.
+my_species = read.table("Species.csv", header=T, row.names=1, sep=",")
+
+## Import data table containing environmental variables of samples included in "my_species"
+my_variables = read.table("Env_variables.csv", header=T, row.names=1, sep=",")
+
+## Calculate ANOSIM analysis on main table using additional categorical environmental variables
+result = with(my_variables, anosim(vegdist(my_species, method="bray"), grouping=Env_variable4))
+
+## See the result statistics and plot
+summary(result)
+plot(result)
+
+## Reading result
+# An R value close to "1.0" suggests dissimilarity between groups while an R value close to "0" suggests an even distribution of high and low ranks within and between groups. R values below "0" suggest that dissimilarities are greater within groups than between groups.
+# More info https://sites.google.com/site/mb3gustame/hypothesis-tests/anosim
