@@ -1,0 +1,22 @@
+#Load the library anda dataset.
+library(vegan)
+
+## Import data table containing species abundances.
+my_species = read.table("Species.csv", header=T, row.names=1, sep=",")
+
+## Import data table containing environmental variables of samples included in "my_species"
+my_variables = read.table("Env_variables.csv", header=T, row.names=1, sep=",")
+
+## Since data must be numeric, this line eliminates the only categorical column "Env_variable3".
+## This step is not necessary for tables containing only numeric values.
+var = my_variables[,c(-3)]
+
+## Obtain DISSIMILARITY distance matrix of original tables
+var.dist = vegdist(scale(var), method="bray") # "scale()" should be used when columns present different magnitudes (e.g. different metrics)
+spec.dist = vegdist(my_species, method="bray")
+
+## Perform test comparing both matrices using "pearson". Be aware that DISSIMILARITY matrices were used and interpret test accordingly.
+mantel(spec.dist, var.dist,  method="pearson")
+
+## Reading result
+# Mantel test are correlation tests that determine the correlation between two matrices, therefore a Mantel statistic r close to 0, means weak relationship between the matrices; on the contrary r close to 1 means a strong relationship between the tested matrices (e.g. Species vs Environmental variables)
