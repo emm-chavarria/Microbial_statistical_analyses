@@ -1,0 +1,27 @@
+## Set working directory, substitute what is between quotation marks
+setwd("/Volumes/ROSEBLOSOMS/Canonical_Correspondence_Analysis)
+
+## Load 'anacor' library
+library(anacor)
+
+## Create your input matrix. You need two separate tables 'table.txt' will contain abundances and 'row.covariates.txt' will have chemical parameters.
+mydata<-list("table"=read.table("table.txt"), "row.covariates"=read.table("row.covariates.txt"))
+
+## Canonical Correspondence Analysis on 'mydata', standard scaling
+res<-anacor(mydata$table, row.covariates = mydata$row.covariates, scaling = c("standard", "standard"))
+
+## To replot environmental conditions results
+res$isetcor
+
+#To replot sampled sites, time points or treatments as well as coordinates of microbes.
+summary(res)
+res$row.scores
+res$col.scores
+
+## Check statistic results of the analysis
+res
+summary(res)
+
+
+## Plotting results as an Ordination Diagram. Modify the percentage values for what was shown in 'res'
+plot(res, plot.type = "orddiag", xlab="C1 (insert value%)", ylab="C2 (insert value%)", main="Canonical Correspondence Analysis (insert value%)", cex.lab=0.9, cex.axis=1, cex.main=0.90)
