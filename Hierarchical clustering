@@ -1,0 +1,17 @@
+## Load libraries
+library(gplots)
+library(RColorBrewer)
+
+## Read table counts
+mydata<-as.matrix(read.delim("file_table.txt",sep="\t"))
+
+##Log transformation (optional)
+mydata.log = log10(mydata)
+mydata.log <- replace(mydata.log, mydata.log =="-Inf", 1.0) #Replace log errors
+
+## Define either color scheme
+colors1 <- colorRampPalette(c("blueviolet", "yellow"))
+colors2 = rev(brewer.pal(9,"YlGnBu"))
+
+## Run heatmap
+heatmap.2(mydata, density.info=c("histogram"), tracecol="black", trace=c("none"), col=colors1, margins=c(10,20), key.title="")
