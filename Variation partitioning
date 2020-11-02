@@ -1,0 +1,20 @@
+#Load vegan library
+library(vegan)
+
+#Load data
+data(varespec) #Species table
+data(varechem) #Environmental variables table
+
+#Run CCA analysis
+cca.result <- cca(varespec, varechem)
+plot(cca.result) #Plot result
+summary(cca.result) #Get result
+
+##  'Partialling out' and  'negative components of variance' (Getting rid of whatever you don't care for now)
+pCCA.result <- cca(varespec ~ Ca + N + P + K + Mg, varechem)
+
+#Partition of variation
+varechem #Display environmental variables
+vp <- varpart(varespec,~P,~K,~Ca+Mg,data=varechem) #Specify from 2 to 4 explanatory tables
+vp #Show result
+plot(vp) #Plot Venn diagram
