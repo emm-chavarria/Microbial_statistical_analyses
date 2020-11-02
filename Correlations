@@ -1,0 +1,50 @@
+#Install and load library
+ library(Hmisc)
+ 
+#Import your data in the following format (without#):
+        # species1   species2  species3   species4   species5  species6   species7    species8  species9
+# var1 0.96617507 0.01979886 0.3477892 0.68446239 0.59558155 0.3107009 0.07302198 0.913455349 0.4003047
+# var2 0.04087212 0.17681395 0.4435732 0.45877153 0.05968926 0.6329174 0.63021362 0.120526914 0.2999924
+# var3 0.48504308 0.30050803 0.6828328 0.08284414 0.72213439 0.3042973 0.41747021 0.845296712 0.5284181
+# var4 0.40739204 0.42525144 0.3470581 0.47251149 0.05990973 0.1074606 0.75686830 0.176879662 0.3501501
+# var5 0.28499993 0.09192410 0.8541914 0.51666399 0.85624482 0.6696368 0.10984263 0.007196047 0.7095057
+ 
+ my.table = read.table("tablita.txt")
+ 
+ #Calculate Spearman correlations for your entire table
+ spearman = rcorr(as.matrix(my.table), type='spearman')
+ 
+ #Save two files for Spearman and p-values
+ write.table(spearman$r, "Spearman.txt", sep="\t", quote=FALSE, row.names=TRUE)
+ write.table(spearman$P, "Spearman_pvalues.txt", sep="\t", quote=FALSE)
+ 
+ #In order to stack and and eliminate duplicate correlations, run in bash: 
+ #"perl matrix2Table.pl Spearman.txt Spearman_split.txt"
+ #"perl matrix2Table.pl Spearman_pvalues.txt Spearman_pvalues_split.txt"
+ 
+ #Combine Spearman and p-values in one single table
+ spearmanP = read.table("Spearman_pvalues_split.txt") #pvalues
+ colnames(spearmanP) = c("From", "To","pvalues")
+
+ corr = read.table("Spearman_split.txt") #spearman
+ colnames(corr) = c("From", "To","Spearman")
+ 
+ output = cbind(corr, spearmanP$pvalues)  #combine
+ colnames(output) = c("From", "To","Spearman", "pvalues")
+ 
+ #Filter out non-significant values
+ output_f = subset(output, output$pvalues<=0.05)
+ 
+ significant0.9 = subset(output_f, abs(output_f$Spearman)>=0.9) #change thresholds if you wish
+ #significant0.8 = subset(significant0.8, significant0.8$pvalues<0.05)
+ 
+ significant0.7 = subset(output_f, abs(output_f$Spearman)>=0.7)
+ #significant0.7 = subset(significant0.7, significant0.7$pvalues<0.05)
+ 
+ significant0.6 = subset(output_f, abs(output_f$Spearman)>=0.6)
+ #significant0.6 = subset(significant0.6, significant0.6$pvalues<0.05)
+
+ #Export significant correlations as txt
+ write.table(significant0.8, "Spearman0.8.txt", sep="\t", quote=FALSE, row.names=FALSE)
+ write.table(significant0.7, "Spearman0.7.txt", sep="\t", quote=FALSE, row.names=FALSE)
+ write.table(significant0.6, "Spearman0.6.txt", sep="\t", quote=FALSE, row.names=FALSE)
